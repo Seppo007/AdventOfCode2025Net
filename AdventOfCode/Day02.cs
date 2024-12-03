@@ -11,38 +11,43 @@ public sealed class Day02 : BaseDay
 
     private string Part1()
     {
-        var levelStrings = _input.Split('\n');
-        var levels = levelStrings
-            .Select(level =>
-                level.Split(" ")
-                    .Select(int.Parse)
-                    .ToArray()
-            )
-            .ToArray();
-
+        var levels = ExtractInputIntoIntLevels(_input);
         var safeLevels = 0;
 
         foreach (var level in levels)
         {
             var isSafe = true;
             var increasing = level[1] > level[0];
+
             for (var i = 1; i < level.Length; i++)
             {
-                if (
-                    (level[i] > level[i - 1] && !increasing || level[i] < level[i - 1] && increasing) ||
-                    Math.Abs(level[i] - level[i - 1]) == 0 || 
-                    Math.Abs(level[i] - level[i - 1]) > 3
-                )
+                if (ViolatesRestrictions(level[i], level[i - 1], increasing))
                 {
                     isSafe = false;
                     break;
                 }
             }
+
             if (isSafe) safeLevels++;
         }
 
         return safeLevels.ToString();
     }
+
+    private int[][] ExtractInputIntoIntLevels(string input) => _input
+        .Split('\n')
+        .Select(level =>
+            level.Split(" ")
+                .Select(int.Parse)
+                .ToArray()
+        )
+        .ToArray();
+
+    private bool ViolatesRestrictions(int value, int predecessor, bool increasingLevel) =>
+        value > predecessor && !increasingLevel ||
+        value < predecessor && increasingLevel ||
+        Math.Abs(value - predecessor) == 0 ||
+        Math.Abs(value - predecessor) > 3;
 
     private string Part2()
     {
