@@ -51,7 +51,38 @@ public sealed class Day02 : BaseDay
 
     private string Part2()
     {
-        return "";
+        var levels = ExtractInputIntoIntLevels(_input);
+        var safeLevels = 0;
+
+        foreach (var level in levels)
+        {
+            var isSafe = true;
+            
+            for (var i = 0; i < level.Length; i++)
+            {
+                isSafe = true;
+                
+                var levelAsList = level.ToList();
+                levelAsList.RemoveAt(i);
+                
+                var increasing = levelAsList[1] > levelAsList[0];
+                
+                for (var j = 1; j < levelAsList.Count; j++)
+                {
+                    if (ViolatesRestrictions(levelAsList[j], levelAsList[j - 1], increasing))
+                    {
+                        isSafe = false;
+                        break;
+                    }
+                }
+                
+                if(isSafe) break;
+            }
+
+            if (isSafe) safeLevels++;
+        }
+
+        return safeLevels.ToString();
     }
 
     public override ValueTask<string> Solve_1() => new(Part1());
