@@ -11,11 +11,11 @@ public sealed class Day03 : BaseDay
         _input = File.ReadAllText(InputFilePath);
     }
 
-    private string[] validMulsFromInput()
+    private string[] ValidMulsFromInput()
     {
-        var validMulsRegex = @"mul\(\d+\,\d+\)"; 
+        const string validMulsRegex = @"mul\(\d+\,\d+\)";
         var validMulsMatch = Regex.Matches(_input, validMulsRegex);
-        
+
         return validMulsMatch.Select(entry => entry.Value).ToArray();
     }
 
@@ -23,17 +23,17 @@ public sealed class Day03 : BaseDay
     {
         var startIndex = mulString.IndexOf('(') + 1;
         var length = mulString.IndexOf(')') - startIndex;
-        
+
         var mulStringValues = mulString.Substring(startIndex, length).Split(',');
         var mulIntValues = mulStringValues.Select(str => int.Parse(str)).ToArray();
-        
+
         return mulIntValues[0] * mulIntValues[1];
     }
-    
+
     private string Part1()
     {
-        var validMulsArray = validMulsFromInput();
-        
+        var validMulsArray = ValidMulsFromInput();
+
         return validMulsArray.Aggregate(0, (current, mul) => current += EvaluateMul(mul)).ToString();
     }
 
