@@ -19,6 +19,23 @@ public sealed class Day03 : BaseDay
         return validMulsMatch.Select(entry => entry.Value).ToArray();
     }
 
+    private string[] ValidMulsBetweenDosFromInput()
+    {
+        const string doStr = "do()";
+        const string dontStr = "don't()";
+
+        const string untilFirstDoRegex = "^.*?do";
+        const string validDoRegex = @"do\((.|\t|\s)*?don";
+        const string validMulsRegex = @"mul\(\d+\,\d+\)";
+        var validUntilFirstDo = string.Join(' ', Regex.Matches(_input, untilFirstDoRegex).Select(entry => entry.Value).ToArray());
+        var validMulsMatchWithDoDont = string.Join(' ', Regex.Matches(_input, validDoRegex).Select(entry => entry.Value).ToArray());
+        var mergedValidMuls = string.Concat(validUntilFirstDo, validMulsMatchWithDoDont);
+        
+        var validMulsMatch = Regex.Matches(mergedValidMuls, validMulsRegex);
+        
+        return validMulsMatch.Select(entry => entry.Value).ToArray();
+    }
+
     private int EvaluateMul(string mulString)
     {
         var startIndex = mulString.IndexOf('(') + 1;
@@ -39,7 +56,9 @@ public sealed class Day03 : BaseDay
 
     private string Part2()
     {
-        return "";
+        var validMulsArray = ValidMulsBetweenDosFromInput();
+        
+        return validMulsArray.Aggregate(0, (current, mul) => current += EvaluateMul(mul)).ToString();
     }
 
     public override ValueTask<string> Solve_1() => new(Part1());
